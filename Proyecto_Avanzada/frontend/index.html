@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>John y Esteban - Facturación</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- PANTALLA DE BIENVENIDA (LOGIN Y REGISTRO) -->
+    <div id="welcome-screen" class="d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow-lg border-0 login-card" style="width: 400px;">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-primary">🏢 John y Esteban</h2>
+                    <p class="text-muted">Sistema de Facturación</p>
+                </div>
+
+                <!-- FORMULARIO DE LOGIN -->
+                <div id="login-form">
+                    <div class="mb-3">
+                        <input type="email" id="login-email" class="form-control form-control-lg" placeholder="Correo Electrónico" value="john@example.com">
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" id="login-password" class="form-control form-control-lg" placeholder="Contraseña" value="123456">
+                    </div>
+                    <button type="button" class="btn btn-primary btn-lg w-100 mb-3" onclick="login()">Iniciar Sesión</button>
+                    
+                    <div id="login-msg" class="text-center fw-bold mb-2"></div>
+                    
+                    <div class="text-center">
+                        <small class="text-muted">¿No tienes cuenta? <a href="javascript:void(0)" onclick="toggleForms()" class="text-decoration-none fw-bold">Regístrate aquí</a></small>
+                    </div>
+                </div>
+
+                <!-- FORMULARIO DE REGISTRO (Oculto por defecto con d-none) -->
+                <div id="register-form" class="d-none">
+                    <div class="mb-2">
+                        <input type="text" id="reg-nombre" class="form-control form-control-lg" placeholder="Nombre Completo">
+                    </div>
+                    <div class="mb-2">
+                        <input type="email" id="reg-email" class="form-control form-control-lg" placeholder="Correo Electrónico">
+                    </div>
+                    <div class="mb-2">
+                        <input type="password" id="reg-password" class="form-control form-control-lg" placeholder="Contraseña">
+                    </div>
+                    <div class="mb-3">
+                        <select id="reg-rol" class="form-select form-select-lg">
+                            <option value="cliente">Cliente</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-success btn-lg w-100 mb-3" onclick="registrar()">Crear Cuenta</button>
+                    
+                    <div id="reg-msg" class="text-center fw-bold mb-2"></div>
+                    
+                    <div class="text-center">
+                        <small class="text-muted">¿Ya tienes cuenta? <a href="javascript:void(0)" onclick="toggleForms()" class="text-decoration-none fw-bold">Inicia Sesión</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- APLICACIÓN PRINCIPAL (Oculta por defecto con d-none) -->
+    <div id="app-section" class="container mt-4 mb-5 d-none">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="m-0">🏢 Facturación John y Esteban</h1>
+            <div>
+                <span id="user-info" class="me-3 fw-bold text-success"></span>
+                <button type="button" class="btn btn-outline-danger fw-bold" onclick="cerrarSesion()">Cerrar Sesión</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-success text-white">1. Seleccionar Cliente</div>
+                    <div class="card-body">
+                        <select id="cliente-select" class="form-select mb-2">
+                            <option value="">Cargando clientes...</option>
+                        </select>
+                        <button type="button" class="btn btn-outline-success w-100" onclick="cargarClientes()">🔄 Recargar Clientes</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-warning text-dark">2. Agregar Productos</div>
+                    <div class="card-body">
+                        <select id="producto-select" class="form-select mb-2">
+                            <option value="">Cargando productos...</option>
+                        </select>
+                        <div class="input-group">
+                            <span class="input-group-text">Cant.</span>
+                            <input type="number" id="cantidad-input" class="form-control" value="1" min="1">
+                            <button type="button" class="btn btn-dark" onclick="agregarProducto()">➕ Agregar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">3. Detalle de la Factura</div>
+            <div class="card-body">
+                <table class="table table-striped" id="tabla-factura">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio Unit.</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <h4 class="text-end">Total: $<span id="total-factura">0</span></h4>
+                <button type="button" class="btn btn-primary w-100 mt-3" onclick="generarFactura()">🧾 Generar y Guardar Factura</button>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                <span>📋 Historial de Facturas</span>
+                <button class="btn btn-sm btn-light fw-bold" onclick="cargarHistorial()">🔄 Actualizar Historial</button>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover" id="tabla-historial">
+                    <thead>
+                        <tr>
+                            <th>N° Factura</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="4" class="text-center text-muted">Haz clic en "Actualizar Historial" para cargar</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- VENTANA EMERGENTE (MODAL) -->
+    <div class="modal fade" id="facturaModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-info text-white">
+            <h5 class="modal-title">✅ Factura Generada Exitosamente</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body bg-light" id="modal-body-print">
+            <div id="factura-html" class="bg-white p-4 rounded border shadow-sm"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-danger fw-bold" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

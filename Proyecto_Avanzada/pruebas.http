@@ -1,0 +1,32 @@
+### Probar Login
+POST http://localhost:8081/login
+Content-Type: application/json
+
+{
+  "email": "ricardo@example.com",
+  "password": "123456"
+}
+
+### Registrar Nuevo Usuario
+POST http://localhost:8081/register
+Content-Type: application/json
+
+{
+  "nombre": "Ricardo Gómez",
+  "email": "ricardo@example.com",
+  "password": "123456",
+  "rol": "admin"
+}
+
+### Generar Factura
+POST http://localhost:8084/facturas
+Content-Type: application/json
+
+{
+  "cliente_id": 201,
+  "usuario_id": 1,
+  "productos": [
+    { "id": 101, "cantidad": 1 },
+    { "id": 102, "cantidad": 2 }
+  ]
+}
